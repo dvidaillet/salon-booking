@@ -1,27 +1,23 @@
+
 "use client";
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { siteConfig } from "@/config/site";
+
+const transitionEase = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   return (
     <section className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-neutral-950 text-white">
-      {/* ======================================================
-          BACKGROUND IMAGE
-      ======================================================= */}
 
+      {/* BACKGROUND IMAGE */}
       <motion.div
-        initial={{
-          scale: 1.08,
-          opacity: 0,
-        }}
-        animate={{
-          scale: 1,
-          opacity: 1,
-        }}
+        initial={{ scale: 1.08, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         transition={{
           duration: 1.8,
-          ease: [0.22, 1, 0.36, 1],
+          ease: transitionEase,
         }}
         className="absolute inset-0"
       >
@@ -34,58 +30,33 @@ export default function Hero() {
         />
       </motion.div>
 
-      {/* ======================================================
-          IMAGE OVERLAYS
-      ======================================================= */}
-
-      {/* Base darkening */}
-
+      {/* IMAGE OVERLAYS */}
       <div className="absolute inset-0 bg-black/30" />
-
-      {/* Main cinematic gradient */}
 
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10" />
 
-      {/* Bottom fade */}
-
       <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-black/80 to-transparent" />
-
-      {/* Subtle vertical gradient */}
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/20" />
 
-      {/* ======================================================
-          DECORATIVE ELEMENTS
-      ======================================================= */}
-
+      {/* DECORATIVE ELEMENTS */}
       <div className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px bg-white/[0.08] lg:block" />
 
       <div className="pointer-events-none absolute inset-y-0 right-[7%] hidden w-px bg-white/[0.06] lg:block" />
 
-      {/* ======================================================
-          MAIN CONTENT
-      ======================================================= */}
-
+      {/* MAIN CONTENT */}
       <div className="relative z-10 flex min-h-[calc(100vh-80px)] items-center">
         <div className="mx-auto w-full max-w-7xl px-6 py-28 lg:px-10">
           <div className="max-w-5xl">
-            {/* ==================================================
-                EYEBROW
-            =================================================== */}
 
+            {/* EYEBROW */}
             <motion.div
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.8,
                 delay: 0.25,
-                ease: [0.22, 1, 0.36, 1],
+                ease: transitionEase,
               }}
               className="mb-8 flex items-center gap-4"
             >
@@ -96,153 +67,89 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            {/* ==================================================
-                TITLE
-            =================================================== */}
-
+            {/* MAIN TITLE */}
             <motion.h1
-              initial={{
-                opacity: 0,
-                y: 45,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
+              initial={{ opacity: 0, y: 45 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 1,
                 delay: 0.35,
-                ease: [0.22, 1, 0.36, 1],
+                ease: transitionEase,
               }}
               className="max-w-4xl text-[clamp(3.5rem,8vw,8rem)] font-light leading-[0.9] tracking-[-0.055em]"
             >
-              <span className="block">Tu belleza.</span>
+              <span className="block">
+                Tu belleza.
+              </span>
 
-              <span className="mt-2 block font-medium">Tu momento.</span>
+              <span className="mt-2 block font-medium">
+                Tu momento.
+              </span>
             </motion.h1>
 
-            {/* ==================================================
-                DESCRIPTION
-            =================================================== */}
-
+            {/* DESCRIPTION */}
             <motion.p
-              initial={{
-                opacity: 0,
-                y: 25,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.8,
                 delay: 0.55,
-                ease: [0.22, 1, 0.36, 1],
+                ease: transitionEase,
               }}
               className="mt-8 max-w-xl text-sm leading-7 text-white/70 sm:text-base"
             >
-              Descubre un espacio pensado para cuidar de ti, relajarte y
-              disfrutar de una experiencia de belleza personalizada.
+              Descubre un espacio pensado para cuidar de ti,
+              relajarte y disfrutar de una experiencia de
+              belleza personalizada.
             </motion.p>
 
-            {/* ==================================================
-                BUTTONS
-            =================================================== */}
-
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            {/* ACTION BUTTONS */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.8,
+                delay: 0.7,
+                ease: transitionEase,
+              }}
+              className="mt-10 flex flex-col gap-3 sm:flex-row"
+            >
+              {/* CONTACT BUTTON */}
               <Link
-                href="/booking"
-                className="
-      group
-      rounded-full
-      bg-white
-      px-8
-      py-4
-      text-center
-      text-sm
-      font-medium
-      text-neutral-950
-      transition-all
-      duration-500
-      ease-out
-      hover:-translate-y-1
-      hover:bg-neutral-100
-      hover:shadow-[0_12px_30px_rgba(0,0,0,0.18)]
-      active:translate-y-0
-    "
+                href="/#contacto"
+                className="group rounded-full bg-white px-8 py-4 text-center text-sm font-medium text-neutral-950 transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-neutral-100 hover:shadow-[0_12px_30px_rgba(0,0,0,0.18)] active:translate-y-0"
               >
                 <span className="inline-flex items-center gap-2">
-                  Reservar cita
-                  <span
-                    className="
-          transition-transform
-          duration-500
-          ease-out
-          group-hover:translate-x-1
-        "
-                  >
+                  Contáctanos
+
+                  <span className="transition-transform duration-500 ease-out group-hover:translate-x-1">
                     →
                   </span>
                 </span>
               </Link>
 
+              {/* SERVICES BUTTON */}
               <Link
                 href="/services"
-                className="
-      group
-      rounded-full
-      border
-      border-white/40
-      bg-white/10
-      px-8
-      py-4
-      text-center
-      text-sm
-      font-medium
-      text-white
-      backdrop-blur
-      transition-all
-      duration-500
-      ease-out
-      hover:-translate-y-1
-      hover:border-white/70
-      hover:bg-white/20
-      hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)]
-      active:translate-y-0
-    "
+                className="group rounded-full border border-white/40 bg-white/10 px-8 py-4 text-center text-sm font-medium text-white backdrop-blur transition-all duration-500 ease-out hover:-translate-y-1 hover:border-white/70 hover:bg-white/20 hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] active:translate-y-0"
               >
                 <span className="inline-flex items-center gap-2">
                   Descubrir servicios
-                  <span
-                    className="
-          transition-transform
-          duration-500
-          ease-out
-          group-hover:translate-y-1
-        "
-                  >
+
+                  <span className="transition-transform duration-500 ease-out group-hover:translate-y-1">
                     ↓
                   </span>
                 </span>
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
 
-      {/* ======================================================
-          BOTTOM INFORMATION
-      ======================================================= */}
-
+      {/* BOTTOM INFORMATION */}
       <motion.div
-        initial={{
-          opacity: 0,
-          y: 20,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{
           duration: 0.8,
           delay: 0.9,
@@ -250,33 +157,20 @@ export default function Hero() {
         className="absolute inset-x-0 bottom-0 z-20 border-t border-white/10"
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
-          {/* Left */}
 
-          <div className="flex items-center gap-8">
-            <div>
-              <span className="block text-xl font-light">+10</span>
+          {/* LEFT */}
+          <div className="flex items-center gap-4">
+            <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
 
-              <span className="text-[9px] uppercase tracking-[0.25em] text-white/40">
-                Años de experiencia
-              </span>
-            </div>
-
-            <div className="hidden h-8 w-px bg-white/10 sm:block" />
-
-            <div className="hidden sm:block">
-              <span className="block text-xl font-light">+2K</span>
-
-              <span className="text-[9px] uppercase tracking-[0.25em] text-white/40">
-                Clientes
-              </span>
-            </div>
+            <span className="text-[10px] uppercase tracking-[0.25em] text-white/70">
+              Belleza · Estilo · Bienestar
+            </span>
           </div>
 
-          {/* Right */}
-
-          <div className="flex items-center gap-4">
+          {/* RIGHT */}
+          <div className="hidden items-center gap-4 sm:flex">
             <span className="text-[9px] uppercase tracking-[0.25em] text-white/40">
-              Beauty & Care
+              {siteConfig.name}
             </span>
 
             <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
@@ -284,17 +178,10 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* ======================================================
-          SCROLL INDICATOR
-      ======================================================= */}
-
+      {/* SCROLL INDICATOR */}
       <motion.div
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{
           delay: 1.2,
           duration: 0.8,
@@ -308,9 +195,7 @@ export default function Hero() {
         <span className="h-10 w-px bg-white/20" />
 
         <motion.span
-          animate={{
-            y: [0, 6, 0],
-          }}
+          animate={{ y: [0, 6, 0] }}
           transition={{
             duration: 2,
             repeat: Infinity,
