@@ -1,49 +1,38 @@
+
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
+import { siteConfig } from "@/config/site";
 import { ArrowUpRight } from "lucide-react";
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 export default function Footer() {
+  const { contact, social } = siteConfig;
+
   return (
     <footer
       id="contacto"
       className="relative scroll-mt-24 overflow-hidden bg-neutral-950 text-white"
     >
       <div className="mx-auto max-w-7xl px-6">
-        {/* =====================================================
-            MAIN FOOTER
-        ====================================================== */}
 
+        {/* MAIN FOOTER */}
         <div className="grid gap-14 py-20 sm:py-24 lg:grid-cols-[1.4fr_0.8fr_0.8fr] lg:gap-20 lg:py-28">
-          {/* =================================================
-              BRAND
-          ================================================= */}
 
+          {/* BRAND */}
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-              amount: 0.3,
-            }}
-            transition={{
-              duration: 0.8,
-              ease: [0.22, 1, 0.36, 1],
-            }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease }}
           >
-            {/* Brand */}
-
             <div className="flex items-center gap-4">
               <span className="h-px w-8 bg-white/30" />
 
               <p className="text-[10px] font-medium uppercase tracking-[0.35em] text-white/40">
-                Salon
+                {siteConfig.name}
               </p>
             </div>
 
@@ -55,49 +44,33 @@ export default function Footer() {
             </h2>
 
             <p className="mt-7 max-w-sm text-sm leading-7 text-white/40">
-              Un espacio dedicado al cuidado, la belleza y el bienestar.
-              Queremos que cada visita sea un momento para ti.
+              {siteConfig.description}
             </p>
 
-            {/* Social / CTA */}
-
-            <a
-              href="#booking"
+            <Link
+              href="/services"
               className="group mt-8 inline-flex items-center gap-4 text-[10px] font-medium uppercase tracking-[0.2em] text-white/70 transition-colors duration-500 hover:text-white"
             >
-              <span>Reservar cita</span>
+              <span>Conoce nuestros servicios</span>
 
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 transition-all duration-500 group-hover:border-white/50 group-hover:bg-white group-hover:text-neutral-950">
                 <ArrowUpRight
                   size={14}
                   strokeWidth={1.5}
-                  className="transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />
               </span>
-            </a>
+            </Link>
           </motion.div>
 
-          {/* =================================================
-              HOURS
-          ================================================= */}
-
+          {/* HOURS */}
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-              amount: 0.3,
-            }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{
               duration: 0.8,
               delay: 0.1,
-              ease: [0.22, 1, 0.36, 1],
+              ease,
             }}
           >
             <div className="flex items-center gap-3">
@@ -108,48 +81,20 @@ export default function Footer() {
               </h3>
             </div>
 
-            <div className="mt-7 space-y-4 text-sm">
-              <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                <span className="text-white/45">Lunes - Viernes</span>
-
-                <span className="text-white/75">09:00 - 19:00</span>
-              </div>
-
-              <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                <span className="text-white/45">Sábado</span>
-
-                <span className="text-white/75">09:00 - 14:00</span>
-              </div>
-
-              <div className="flex justify-between gap-6">
-                <span className="text-white/45">Domingo</span>
-
-                <span className="text-white/30">Cerrado</span>
-              </div>
-            </div>
+            <p className="mt-7 text-sm leading-7 text-white/55">
+              Horarios de atención pendientes de confirmar.
+            </p>
           </motion.div>
 
-          {/* =================================================
-              CONTACT
-          ================================================= */}
-
+          {/* CONTACT */}
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-              amount: 0.3,
-            }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{
               duration: 0.8,
               delay: 0.2,
-              ease: [0.22, 1, 0.36, 1],
+              ease,
             }}
           >
             <div className="flex items-center gap-3">
@@ -161,86 +106,102 @@ export default function Footer() {
             </div>
 
             <div className="mt-7 space-y-4 text-sm">
-              <a
-                href="tel:+34600000000"
-                className="block text-white/55 transition-colors duration-500 hover:text-white"
-              >
-                +34 600 000 000
-              </a>
 
-              <a
-                href="mailto:info@salon.com"
-                className="group flex items-center gap-2 text-white/55 transition-colors duration-500 hover:text-white"
-              >
-                <span>info@salon.com</span>
+              {contact.phone && (
+                <a
+                  href={`tel:${contact.phone}`}
+                  className="block text-white/55 transition-colors hover:text-white"
+                >
+                  {contact.phone}
+                </a>
+              )}
 
-                <ArrowUpRight
-                  size={12}
-                  strokeWidth={1.5}
-                  className="opacity-0 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
-                />
-              </a>
+              {contact.email && (
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="block text-white/55 transition-colors hover:text-white"
+                >
+                  {contact.email}
+                </a>
+              )}
 
-              <p className="text-white/35">Madrid, España</p>
+              {contact.address && (
+                <p className="text-white/55">
+                  {contact.address}
+                </p>
+              )}
+
+              {contact.whatsapp && (
+                <a
+                  href={`https://wa.me/${contact.whatsapp.replace(/\D/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/55 transition-colors hover:text-white"
+                >
+                  WhatsApp ↗
+                </a>
+              )}
+
+              {!contact.phone &&
+                !contact.email &&
+                !contact.address &&
+                !contact.whatsapp && (
+                  <p className="text-white/40">
+                    Información de contacto próximamente.
+                  </p>
+                )}
+
+              {/* SOCIAL MEDIA */}
+              <div className="flex items-center gap-5 pt-4">
+
+                {social.instagram && (
+                  <a
+                    href={social.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    className="text-white/50 transition-colors hover:text-white"
+                  >
+                    <span className="text-xs font-semibold">IG</span>
+                  </a>
+                )}
+
+                {social.facebook && (
+                  <a
+                    href={social.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    className="text-white/50 transition-colors hover:text-white"
+                  >
+                    <span className="text-xs font-semibold">FB</span>
+                  </a>
+                )}
+
+              </div>
             </div>
           </motion.div>
         </div>
 
-        {/* =====================================================
-            DIVIDER
-        ====================================================== */}
-
+        {/* DIVIDER */}
         <motion.div
-          initial={{
-            scaleX: 0,
-            transformOrigin: "left",
-          }}
-          whileInView={{
-            scaleX: 1,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.3,
-          }}
-          transition={{
-            duration: 1,
-            delay: 0.2,
-            ease: [0.22, 1, 0.36, 1],
-          }}
+          initial={{ scaleX: 0, transformOrigin: "left" }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 1, delay: 0.2, ease }}
           className="h-px w-full bg-white/10"
         />
 
-        {/* =====================================================
-            BOTTOM BAR
-        ====================================================== */}
+        {/* BOTTOM BAR */}
+        <div className="flex flex-col gap-4 py-6 text-[10px] uppercase tracking-[0.15em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
 
-        <div className="flex flex-col gap-4 py-6 text-[10px] uppercase tracking-[0.15em] text-white/25 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Salon</p>
+          <p>
+            © {new Date().getFullYear()} {siteConfig.name}
+          </p>
 
-          <div className="flex gap-6">
-            <a
-              href="#"
-              className="transition-colors duration-500 hover:text-white/60"
-            >
-              Privacidad
-            </a>
-
-            <a
-              href="#"
-              className="transition-colors duration-500 hover:text-white/60"
-            >
-              Cookies
-            </a>
-
-            <a
-              href="#"
-              className="transition-colors duration-500 hover:text-white/60"
-            >
-              Aviso legal
-            </a>
-          </div>
-
-          <p>Todos los derechos reservados</p>
+          <p>
+            Todos los derechos reservados
+          </p>
         </div>
       </div>
     </footer>
