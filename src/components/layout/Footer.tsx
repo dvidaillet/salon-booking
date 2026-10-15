@@ -5,15 +5,16 @@ import { ArrowUpRight } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-neutral-950 text-white">
+    <footer
+      id="contacto"
+      className="relative scroll-mt-24 overflow-hidden bg-neutral-950 text-white"
+    >
       <div className="mx-auto max-w-7xl px-6">
-
         {/* =====================================================
             MAIN FOOTER
         ====================================================== */}
 
         <div className="grid gap-14 py-20 sm:py-24 lg:grid-cols-[1.4fr_0.8fr_0.8fr] lg:gap-20 lg:py-28">
-
           {/* =================================================
               BRAND
           ================================================= */}
@@ -109,33 +110,21 @@ export default function Footer() {
 
             <div className="mt-7 space-y-4 text-sm">
               <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                <span className="text-white/45">
-                  Lunes - Viernes
-                </span>
+                <span className="text-white/45">Lunes - Viernes</span>
 
-                <span className="text-white/75">
-                  09:00 - 19:00
-                </span>
+                <span className="text-white/75">09:00 - 19:00</span>
               </div>
 
               <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                <span className="text-white/45">
-                  Sábado
-                </span>
+                <span className="text-white/45">Sábado</span>
 
-                <span className="text-white/75">
-                  09:00 - 14:00
-                </span>
+                <span className="text-white/75">09:00 - 14:00</span>
               </div>
 
               <div className="flex justify-between gap-6">
-                <span className="text-white/45">
-                  Domingo
-                </span>
+                <span className="text-white/45">Domingo</span>
 
-                <span className="text-white/30">
-                  Cerrado
-                </span>
+                <span className="text-white/30">Cerrado</span>
               </div>
             </div>
           </motion.div>
@@ -192,9 +181,7 @@ export default function Footer() {
                 />
               </a>
 
-              <p className="text-white/35">
-                Madrid, España
-              </p>
+              <p className="text-white/35">Madrid, España</p>
             </div>
           </motion.div>
         </div>
@@ -228,9 +215,7 @@ export default function Footer() {
         ====================================================== */}
 
         <div className="flex flex-col gap-4 py-6 text-[10px] uppercase tracking-[0.15em] text-white/25 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} Salon
-          </p>
+          <p>© {new Date().getFullYear()} Salon</p>
 
           <div className="flex gap-6">
             <a
@@ -255,9 +240,7 @@ export default function Footer() {
             </a>
           </div>
 
-          <p>
-            Todos los derechos reservados
-          </p>
+          <p>Todos los derechos reservados</p>
         </div>
       </div>
     </footer>
