@@ -1,34 +1,22 @@
-
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import type { Service } from "@/types/service";
+import AnimatedImage from "../ui/AnimatedImage";
 
 interface ServiceCardProps {
   service: Service;
 }
 
-export default function ServiceCard({
-  service,
-}: ServiceCardProps) {
+export default function ServiceCard({ service }: ServiceCardProps) {
   return (
     <article className="group">
       <div className="relative aspect-[4/5] overflow-hidden bg-neutral-200">
-        <motion.img
+        <AnimatedImage
           src={service.image}
           alt={service.name}
-          loading="lazy"
-          initial={{ scale: 1.08 }}
-          whileInView={{ scale: 1 }}
-          whileHover={{ scale: 1.06 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 1.1,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="h-full w-full object-cover"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10" />

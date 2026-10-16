@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
+import AnimatedImage from "@/components/ui/AnimatedImage";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -15,7 +16,6 @@ export default function AboutSection() {
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid overflow-hidden lg:grid-cols-2">
-          {/* IMAGEN EDITORIAL */}
           <motion.div
             initial={{ opacity: 0, x: -35 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -23,19 +23,13 @@ export default function AboutSection() {
             transition={{ duration: 0.9, ease }}
             className="group relative min-h-[420px] overflow-hidden bg-neutral-300 sm:min-h-[540px] lg:min-h-[680px]"
           >
-            <motion.img
+            <AnimatedImage
               src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=1400&q=85"
               alt="Imagen ilustrativa de un espacio de belleza"
-              loading="lazy"
-              initial={{ scale: 1.07 }}
-              whileInView={{ scale: 1 }}
-              whileHover={{ scale: 1.04 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.3, ease }}
-              className="absolute inset-0 h-full w-full object-cover"
+              sizes="(max-width: 1023px) 100vw, 50vw"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
             <div className="absolute bottom-8 left-8 right-8">
               <span className="text-[10px] uppercase tracking-[0.3em] text-white/85">
@@ -44,7 +38,6 @@ export default function AboutSection() {
             </div>
           </motion.div>
 
-          {/* CONTENIDO */}
           <div className="flex items-center bg-[#faf8f5] px-7 py-16 sm:px-12 sm:py-20 lg:px-14 xl:px-20">
             <motion.div
               initial={{ opacity: 0, y: 35 }}
