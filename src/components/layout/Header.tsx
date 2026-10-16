@@ -1,134 +1,157 @@
+
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { usePathname } from "next/navigation";
+import { useEffect, useId, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "motion/react";
+import { ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 const navigation = [
-  {
-    label: "Inicio",
-    href: "/",
-  },
-  {
-    label: "Servicios",
-    href: "/services",
-  },
-  {
-    label: "Contacto",
-    href: "/#contacto",
-  },
+  { label: "Inicio", href: "/" },
+  { label: "Servicios", href: "/services" },
+  { label: "Contacto", href: "/#contacto" },
 ];
 
 export default function Header() {
+  const pathname = usePathname();
+  const menuId = useId();
+  const reduceMotion = useReducedMotion();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  /*
-   * Detectar scroll
-   */
-
   useEffect(() => {
-    const handleScroll = () => {
+    const updateScroll = () => {
       setScrolled(window.scrollY > 30);
     };
 
-    handleScroll();
+    updateScroll();
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", updateScroll, {
+      passive: true,
+    });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", updateScroll);
     };
   }, []);
 
-  /*
-   * Bloquear scroll cuando el menú móvil está abierto
-   */
-
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [menuOpen]);
 
-  const closeMenu = () => {
-    setMenuOpen(false);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const closeMenu = () => setMenuOpen(false);
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    if (href === "/#contacto") return false;
+
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
     <>
       <motion.header
-        initial={{
-          y: -20,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
+        initial={
+          reduceMotion ? false : { opacity: 0, y: -20 }
+        }
+        animate={{ opacity: 1, y: 0 }}
         transition={{
-          duration: 0.8,
+          duration: reduceMotion ? 0 : 0.7,
           ease: [0.22, 1, 0.36, 1],
         }}
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ${
-          scrolled ? "px-4 pt-3 lg:px-6" : "px-0 pt-0"
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "px-4 pt-3 lg:px-6"
+            : "px-0 pt-0"
         }`}
       >
         <div
-          className={`mx-auto transition-all duration-700 ${
+          className={`mx-auto transition-all duration-500 ${
             scrolled
-              ? "max-w-7xl rounded-2xl border border-black/[0.06] bg-white/85 shadow-[0_10px_40px_rgba(0,0,0,0.06)] backdrop-blur-xl"
+              ? "max-w-7xl rounded-2xl border border-black/[0.06] bg-white/90 shadow-[0_10px_40px_rgba(0,0,0,0.07)] backdrop-blur-xl"
               : "max-w-full border-b border-black/[0.06] bg-white/90 backdrop-blur-md"
           }`}
         >
           <div
-            className={`mx-auto flex items-center justify-between px-6 transition-all duration-700 lg:px-10 ${
+            className={`mx-auto flex items-center justify-between px-6 transition-all duration-500 lg:px-10 ${
               scrolled ? "h-16" : "h-20"
             }`}
           >
-            {/* ==================================================
-                LOGO
-            ================================================== */}
-
+            {/* LOGOTIPO */}
             <Link
               href="/"
               onClick={closeMenu}
-              className="group relative flex items-center"
+              aria-label={`${siteConfig.name} — Inicio`}
+              className="group relative inline-flex items-center"
             >
               <span className="text-[18px] font-medium tracking-[0.28em] text-neutral-950">
                 {siteConfig.shortName}
               </span>
 
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-neutral-950 transition-all duration-500 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 h-px w-0 bg-[#a68c74] transition-all duration-500 group-hover:w-full" />
             </Link>
 
-            {/* ==================================================
-                DESKTOP NAVIGATION
-            ================================================== */}
-
-            <nav className="hidden items-center gap-10 md:flex">
+            {/* NAVEGACIÓN DESKTOP */}
+            <nav
+              aria-label="Navegación principal"
+              className="hidden items-center gap-10 md:flex"
+            >
               {navigation.map((item) => {
-                const isBooking = item.href === "/#contacto";
+                const contact = item.href === "/#contacto";
+                const active = isActive(item.href);
 
-                if (isBooking) {
+                if (contact) {
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="group relative ml-2 flex items-center gap-4 overflow-hidden rounded-full bg-neutral-950 px-5 py-2.5 text-[12px] font-medium uppercase tracking-[0.12em] text-white transition-all duration-500 hover:bg-neutral-800"
+                      className="group ml-2 inline-flex items-center gap-4 rounded-full bg-neutral-950 px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.13em] text-white transition-colors duration-300 hover:bg-[#a68c74]"
                     >
-                      <span className="relative z-10">{item.label}</span>
+                      {item.label}
 
-                      <span className="relative z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
-                        <span className="block h-1.5 w-1.5 rounded-full bg-white transition-transform duration-500 group-hover:scale-125" />
-                      </span>
+                      <ArrowUpRight
+                        size={15}
+                        strokeWidth={1.6}
+                        className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
                     </Link>
                   );
                 }
@@ -137,80 +160,71 @@ export default function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="group relative py-2 text-[12px] font-medium uppercase tracking-[0.14em] text-neutral-500 transition-colors duration-300 hover:text-neutral-950"
+                    aria-current={active ? "page" : undefined}
+                    className={`group relative py-2 text-[11px] font-medium uppercase tracking-[0.15em] transition-colors duration-300 ${
+                      active
+                        ? "text-neutral-950"
+                        : "text-neutral-500 hover:text-neutral-950"
+                    }`}
                   >
                     {item.label}
 
-                    <span className="absolute bottom-0 left-0 h-px w-0 bg-neutral-950 transition-all duration-500 group-hover:w-full" />
+                    <span
+                      className={`absolute bottom-0 left-0 h-px bg-[#a68c74] transition-all duration-300 ${
+                        active
+                          ? "w-full"
+                          : "w-0 group-hover:w-full"
+                      }`}
+                    />
                   </Link>
                 );
               })}
             </nav>
 
-            {/* ==================================================
-                MOBILE BUTTON
-            ================================================== */}
-
+            {/* BOTÓN MÓVIL */}
             <button
               type="button"
-              aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-label={
+                menuOpen ? "Cerrar menú" : "Abrir menú"
+              }
               aria-expanded={menuOpen}
+              aria-controls={menuId}
               onClick={() => setMenuOpen((value) => !value)}
-              className="group relative flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white/50 md:hidden"
+              className="relative flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white/60 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a68c74] md:hidden"
             >
-              <span className="relative flex h-4 w-5 flex-col justify-between">
+              <span className="relative block h-5 w-5">
                 <motion.span
                   animate={
                     menuOpen
-                      ? {
-                          y: 7,
-                          rotate: 45,
-                        }
-                      : {
-                          y: 0,
-                          rotate: 0,
-                        }
+                      ? { rotate: 45, y: 9 }
+                      : { rotate: 0, y: 3 }
                   }
                   transition={{
-                    duration: 0.35,
+                    duration: reduceMotion ? 0 : 0.25,
                   }}
                   className="absolute left-0 top-0 h-px w-full bg-neutral-900"
                 />
 
                 <motion.span
-                  animate={
-                    menuOpen
-                      ? {
-                          opacity: 0,
-                          x: 8,
-                        }
-                      : {
-                          opacity: 1,
-                          x: 0,
-                        }
-                  }
-                  transition={{
-                    duration: 0.25,
+                  animate={{
+                    opacity: menuOpen ? 0 : 1,
                   }}
-                  className="absolute left-0 top-[7px] h-px w-full bg-neutral-900"
+                  transition={{
+                    duration: reduceMotion ? 0 : 0.2,
+                  }}
+                  className="absolute left-0 top-[9px] h-px w-full bg-neutral-900"
                 />
 
                 <motion.span
                   animate={
                     menuOpen
-                      ? {
-                          y: 7,
-                          rotate: -45,
-                        }
-                      : {
-                          y: 14,
-                          rotate: 0,
-                        }
+                      ? { rotate: -45, y: -9 }
+                      : { rotate: 0, y: -3 }
                   }
                   transition={{
-                    duration: 0.35,
+                    duration: reduceMotion ? 0 : 0.25,
                   }}
-                  className="absolute left-0 top-0 h-px w-full bg-neutral-900"
+                  className="absolute bottom-0 left-0 h-px w-full bg-neutral-900"
                 />
               </span>
             </button>
@@ -218,40 +232,32 @@ export default function Header() {
         </div>
       </motion.header>
 
-      {/* ======================================================
-          MOBILE MENU
-      ======================================================= */}
-
+      {/* MENÚ MÓVIL */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Backdrop */}
-
             <motion.div
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              exit={{
-                opacity: 0,
-              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{
-                duration: 0.4,
+                duration: reduceMotion ? 0 : 0.25,
               }}
               onClick={closeMenu}
-              className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
+              aria-hidden="true"
+              className="fixed inset-0 z-40 bg-black/25 backdrop-blur-sm md:hidden"
             />
 
-            {/* Menu */}
-
             <motion.div
-              initial={{
-                opacity: 0,
-                y: -20,
-                scale: 0.98,
-              }}
+              id={menuId}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menú de navegación"
+              initial={
+                reduceMotion
+                  ? false
+                  : { opacity: 0, y: -16, scale: 0.98 }
+              }
               animate={{
                 opacity: 1,
                 y: 0,
@@ -259,64 +265,74 @@ export default function Header() {
               }}
               exit={{
                 opacity: 0,
-                y: -20,
+                y: -12,
                 scale: 0.98,
               }}
               transition={{
-                duration: 0.45,
+                duration: reduceMotion ? 0 : 0.35,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="fixed inset-x-4 top-[88px] z-50 overflow-hidden rounded-3xl border border-black/[0.06] bg-[#fafaf9]/95 p-6 shadow-[0_25px_80px_rgba(0,0,0,0.12)] backdrop-blur-xl md:hidden"
+              className={`fixed inset-x-4 z-50 max-h-[calc(100dvh-110px)] overflow-y-auto rounded-3xl border border-black/[0.06] bg-[#faf8f5] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.14)] md:hidden ${
+                scrolled ? "top-[84px]" : "top-[96px]"
+              }`}
             >
-              <nav className="flex flex-col">
+              <nav
+                aria-label="Navegación móvil"
+                className="flex flex-col"
+              >
                 {navigation.map((item, index) => {
-                  const isBooking = item.href === "/booking";
+                  const active = isActive(item.href);
 
                   return (
                     <motion.div
                       key={item.href}
-                      initial={{
-                        opacity: 0,
-                        x: -15,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        x: 0,
-                      }}
+                      initial={
+                        reduceMotion
+                          ? false
+                          : { opacity: 0, x: -12 }
+                      }
+                      animate={{ opacity: 1, x: 0 }}
                       transition={{
-                        delay: 0.08 + index * 0.06,
-                        duration: 0.4,
+                        delay: reduceMotion
+                          ? 0
+                          : 0.05 + index * 0.06,
+                        duration: reduceMotion ? 0 : 0.3,
                       }}
                     >
                       <Link
                         href={item.href}
                         onClick={closeMenu}
-                        className={`group flex items-center justify-between border-b border-black/[0.07] py-5 ${
-                          isBooking ? "text-neutral-950" : "text-neutral-600"
+                        aria-current={
+                          active ? "page" : undefined
+                        }
+                        className={`group flex items-center justify-between border-b border-black/[0.07] py-5 transition-colors ${
+                          active
+                            ? "text-[#a68c74]"
+                            : "text-neutral-800 hover:text-[#a68c74]"
                         }`}
                       >
-                        <span className="text-lg font-light tracking-tight">
+                        <span className="text-xl font-light tracking-tight">
                           {item.label}
                         </span>
 
-                        <span className="text-sm text-neutral-400 transition-transform duration-300 group-hover:translate-x-1">
-                          ↗
-                        </span>
+                        <ArrowUpRight
+                          size={19}
+                          strokeWidth={1.5}
+                          className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                        />
                       </Link>
                     </motion.div>
                   );
                 })}
               </nav>
 
-              {/* Bottom information */}
-
-              <div className="mt-8 flex items-center justify-between">
-                <span className="text-[9px] uppercase tracking-[0.25em] text-neutral-400">
-                  Beauty & Care
+              <div className="mt-8 flex items-center justify-between gap-4">
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-500">
+                  {siteConfig.shortName}
                 </span>
 
-                <span className="text-[9px] uppercase tracking-[0.25em] text-neutral-400">
-                  Est. 2026
+                <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-400">
+                  {siteConfig.tagline}
                 </span>
               </div>
             </motion.div>
