@@ -8,12 +8,12 @@ import AnimatedImage from "@/components/ui/AnimatedImage";
 
 interface ServiceCardProps {
   service: Service;
-  index: number;
+  index?: number;
 }
 
 export default function ServiceCard({
   service,
-  index,
+  index = 0,
 }: ServiceCardProps) {
   return (
     <article className="group flex h-full min-w-0 flex-col">
