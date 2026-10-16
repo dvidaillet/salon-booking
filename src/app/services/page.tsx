@@ -1,6 +1,8 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ServiceGrid from "@/components/services/ServiceGrid";
@@ -9,9 +11,7 @@ import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Nuestros servicios",
-  description:
-    "Descubre los servicios de belleza, cabello y cuidado personal de " +
-    siteConfig.name,
+  description: `Descubre los servicios de belleza y cuidado personal de ${siteConfig.name}.`,
 };
 
 export default function ServicesPage() {
@@ -19,66 +19,88 @@ export default function ServicesPage() {
     <>
       <Header />
 
-      <main>
-        <section className="relative overflow-hidden bg-neutral-950 text-white">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=2000&q=85')",
-            }}
-          />
+      <main className="bg-[#11100f] text-white">
+        {/* HERO */}
+        <section
+          aria-labelledby="services-title"
+          className="relative isolate overflow-hidden bg-[#11100f] px-5 pb-24 pt-36 text-white sm:px-10 sm:pb-32 sm:pt-44 lg:px-16 lg:pb-40 lg:pt-52"
+        >
+          <div className="pointer-events-none absolute -right-32 top-0 -z-10 h-[450px] w-[450px] rounded-full border border-white/[0.06] sm:h-[650px] sm:w-[650px]" />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/85 to-neutral-950/40" />
+          <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#a68c74]/10 blur-[140px]" />
 
-          <div className="relative mx-auto max-w-7xl px-6 py-28 sm:py-36 lg:px-10 lg:py-44">
-            <div className="mb-8 flex items-center gap-4">
-              <span className="h-px w-10 bg-white/50" />
-              <span className="text-[10px] uppercase tracking-[0.35em] text-white/65">
-                Élite Beauty Studio
+          <div className="relative mx-auto max-w-[1450px]">
+            <div className="flex items-center gap-4">
+              <span className="h-px w-10 bg-[#d6b79a]" />
+              <span className="text-[10px] uppercase tracking-[0.28em] text-[#d6b79a]">
+                The Élite Experience
               </span>
             </div>
 
-            <h1 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+            <h1
+              id="services-title"
+              className="mt-9 max-w-6xl text-[clamp(3.3rem,10vw,10rem)] font-light uppercase leading-[0.88] tracking-[-0.075em] text-white"
+            >
               El arte de
-              <span className="block font-medium italic text-[#d8c2a7]">
-                cuidar de ti.
+              <span className="mt-2 block font-medium italic text-[#d6b79a]">
+                cuidarte.
               </span>
             </h1>
 
-            <p className="mt-8 max-w-xl text-sm leading-8 text-white/65 sm:text-base">
-              Explora nuestros servicios de belleza y cuidado
-              personal. Cada detalle está pensado para ayudarte
-              a expresar tu estilo.
-            </p>
+            <div className="mt-12 flex flex-col justify-between gap-9 border-t border-white/15 pt-8 md:flex-row md:items-end">
+              <p className="max-w-lg text-sm font-light leading-8 text-white/70 sm:text-base">
+                Cada detalle cuenta. Explora nuestra selección
+                de servicios de belleza y descubre nuevas formas
+                de expresar tu estilo.
+              </p>
 
-            <a
-              href="#catalogo"
-              className="mt-10 inline-flex items-center gap-3 border-b border-white/40 pb-2 text-xs uppercase tracking-[0.2em] text-white transition-colors hover:border-white"
-            >
-              Explorar servicios
-              <span aria-hidden="true">↓</span>
-            </a>
+              <a
+                href="#catalogo"
+                className="group inline-flex min-h-12 items-center gap-4 self-start text-[11px] font-medium uppercase tracking-[0.16em] text-[#d6b79a] transition-colors hover:text-white"
+              >
+                Explorar catálogo
+
+                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#d6b79a]/50 transition-colors group-hover:border-white">
+                  <ArrowDownRight size={18} strokeWidth={1.5} />
+                </span>
+              </a>
+            </div>
           </div>
         </section>
 
+        {/* CATÁLOGO OSCURO */}
         <section
           id="catalogo"
-          className="scroll-mt-24 bg-[#faf8f5] px-6 py-24 sm:py-32 lg:px-10"
+          aria-labelledby="catalogo-title"
+          style={{
+            backgroundColor: "#171310",
+            color: "#ffffff",
+          }}
+          className="scroll-mt-24 border-t border-white/10 px-5 py-20 sm:px-10 sm:py-28 lg:px-16 lg:py-36"
         >
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-14 flex flex-col justify-between gap-6 border-b border-neutral-200 pb-10 lg:mb-20 lg:flex-row lg:items-end">
+          <div className="mx-auto max-w-[1450px]">
+            <div className="mb-12 flex flex-col justify-between gap-7 border-b border-white/15 pb-10 sm:mb-16 lg:mb-20 lg:flex-row lg:items-end">
               <div>
-                <p className="mb-5 text-[10px] font-medium uppercase tracking-[0.35em] text-neutral-500">
-                  Descubre nuestra selección
-                </p>
+                <div className="flex items-center gap-4">
+                  <span className="h-px w-10 bg-[#d6b79a]" />
 
-                <h2 className="text-4xl font-light tracking-[-0.045em] text-neutral-950 sm:text-5xl">
-                  Nuestros servicios
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-[#d6b79a]">
+                    Descubre nuestra selección
+                  </span>
+                </div>
+
+                <h2
+                  id="catalogo-title"
+                  className="mt-6 text-[clamp(2.6rem,6vw,6rem)] font-light leading-[0.95] tracking-[-0.06em] text-white"
+                >
+                  Nuestros
+                  <span className="mt-2 block font-medium italic text-[#d6b79a]">
+                    servicios.
+                  </span>
                 </h2>
               </div>
 
-              <p className="max-w-sm text-sm leading-7 text-neutral-500">
+              <p className="max-w-sm text-sm font-light leading-7 text-white/70">
                 Belleza, estilo y bienestar en una experiencia
                 diseñada para ti.
               </p>
@@ -88,27 +110,28 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        <section className="bg-[#eae4dc] px-6 py-24 text-center sm:py-32">
-          <div className="mx-auto max-w-3xl">
-            <p className="mb-6 text-[10px] uppercase tracking-[0.35em] text-neutral-500">
-              Estamos para ayudarte
-            </p>
+        {/* CIERRE */}
+        <section className="border-t border-white/10 bg-[#11100f] px-5 py-24 text-white sm:px-10 sm:py-32 lg:px-16">
+          <div className="mx-auto flex max-w-[1450px] flex-col justify-between gap-10 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[#d6b79a]">
+                Your Beauty, Your Moment
+              </p>
 
-            <h2 className="text-4xl font-light tracking-[-0.045em] text-neutral-950 sm:text-5xl">
-              ¿Quieres saber más?
-            </h2>
-
-            <p className="mx-auto mt-6 max-w-lg text-sm leading-7 text-neutral-600">
-              Conoce nuestros servicios y ponte en contacto
-              con nosotros para obtener más información.
-            </p>
+              <h2 className="mt-6 max-w-3xl text-[clamp(2.8rem,6vw,6rem)] font-light leading-[0.95] tracking-[-0.06em] text-white">
+                La belleza tiene
+                <span className="mt-2 block italic text-[#d6b79a]">
+                  tu nombre.
+                </span>
+              </h2>
+            </div>
 
             <Link
               href="/#contacto"
-              className="mt-9 inline-flex items-center gap-3 rounded-full bg-neutral-950 px-8 py-4 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-1 hover:bg-neutral-800"
+              className="group inline-flex min-h-12 items-center gap-4 self-start rounded-full border border-[#d6b79a]/60 px-6 py-3 text-[11px] uppercase tracking-[0.14em] text-[#d6b79a] transition-colors hover:bg-[#d6b79a] hover:text-[#11100f]"
             >
-              Contáctanos
-              <span aria-hidden="true">↗</span>
+              Información de contacto
+              <ArrowUpRight size={17} strokeWidth={1.5} />
             </Link>
           </div>
         </section>

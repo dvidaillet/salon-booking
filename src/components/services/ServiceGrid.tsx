@@ -1,53 +1,44 @@
+
 "use client";
 
-import { motion } from "motion/react";
-import { Service } from "@/types/service";
+import { motion, useReducedMotion } from "motion/react";
+import type { Service } from "@/types/service";
 import ServiceCard from "./ServiceCard";
 
 interface ServiceGridProps {
   services: Service[];
 }
 
-export default function ServiceGrid({ services }: ServiceGridProps) {
+const ease = [0.22, 1, 0.36, 1] as const;
+
+export default function ServiceGrid({
+  services,
+}: ServiceGridProps) {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{
-        once: true,
-        amount: 0.08,
-      }}
-      variants={{
-        hidden: {},
-        visible: {
-          transition: {
-            staggerChildren: 0.12,
-          },
-        },
-      }}
-      className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16"
-    >
-      {services.map((service) => (
+    <div className="grid grid-cols-1 gap-x-5 gap-y-14 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-16 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-20">
+      {services.map((service, index) => (
         <motion.div
           key={service.id}
-          variants={{
-            hidden: {
-              opacity: 0,
-              y: 40,
-            },
-            visible: {
-              opacity: 1,
-              y: 0,
-              transition: {
-                duration: 0.8,
-                ease: [0.22, 1, 0.36, 1],
-              },
-            },
+          initial={
+            reduceMotion ? false : { opacity: 0, y: 35 }
+          }
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.12 }}
+          transition={{
+            duration: reduceMotion ? 0 : 0.8,
+            delay: reduceMotion ? 0 : (index % 3) * 0.08,
+            ease,
           }}
+          className="min-w-0"
         >
-          <ServiceCard service={service} />
+          <ServiceCard
+            service={service}
+            index={index}
+          />
         </motion.div>
       ))}
-    </motion.div>
+    </div>
   );
 }
