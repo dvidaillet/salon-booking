@@ -465,6 +465,83 @@ export default function BookingExperience({
             Próximamente activaremos el envío de solicitudes. Seleccionar una
             hora todavía no reserva la cita.
           </p>
+          {showCustomerForm && selectedSlot && (
+            <section
+              id="booking-customer-form"
+              className="rounded-2xl border border-[#d6b79a]/25 bg-[#171310] p-6 sm:p-10 lg:col-span-2"
+            >
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#d6b79a]">
+                Último paso
+              </p>
+
+              <h2 className="mt-4 text-3xl font-light">
+                Tus datos de contacto.
+              </h2>
+
+              <p className="mt-4 text-sm leading-7 text-white/50">
+                Completa tus datos para preparar tu solicitud de cita.
+              </p>
+
+              <div className="mt-8 grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="customer-name" className="mb-2 block text-sm">
+                    Nombre completo
+                  </label>
+                  <input
+                    id="customer-name"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Tu nombre"
+                    className={inputClass}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="customer-phone"
+                    className="mb-2 block text-sm"
+                  >
+                    Teléfono / WhatsApp
+                  </label>
+                  <input
+                    id="customer-phone"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder="Tu número de contacto"
+                    className={inputClass}
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="customer-notes"
+                    className="mb-2 block text-sm"
+                  >
+                    Notas adicionales (opcional)
+                  </label>
+                  <textarea
+                    id="customer-notes"
+                    rows={4}
+                    placeholder="¿Hay algo que debamos saber?"
+                    className={`${inputClass} py-4`}
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                disabled
+                className="mt-8 min-h-13 w-full rounded-full bg-[#d6b79a] px-6 py-4 text-sm font-medium text-[#11100f] opacity-50 sm:w-auto"
+              >
+                Enviar solicitud de cita
+              </button>
+
+              <p className="mt-4 text-xs text-white/40">
+                El envío estará disponible cuando conectemos el registro seguro
+                de citas.
+              </p>
+            </section>
+          )}
         </div>
       </aside>
     </div>
