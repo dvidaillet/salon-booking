@@ -6,6 +6,6 @@ export const salonConfig = {
   booking: {
     slotIntervalMinutes: 15,
     minimumNoticeMinutes: 60,
-    maximumAdvanceDays: 60,
+    maximumAdvanceDays: 7,
   },
 } as const;
