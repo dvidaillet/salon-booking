@@ -86,6 +86,7 @@ export default function BookingExperience({
   const [date, setDate] = useState("");
   const [slots, setSlots] = useState<Slot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -448,8 +449,14 @@ export default function BookingExperience({
 
           <button
             type="button"
-            disabled
-            className="mt-8 min-h-13 w-full rounded-full bg-[#d6b79a] px-5 py-4 text-xs font-semibold uppercase tracking-[0.12em] text-[#11100f] opacity-50"
+            disabled={!selectedService || !selectedSlot}
+            onClick={() => {
+              setShowCustomerForm(true);
+              document
+                .getElementById("booking-customer-form")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="mt-8 min-h-13 w-full rounded-full bg-[#d6b79a] px-5 py-4 text-xs font-semibold uppercase tracking-[0.12em] text-[#11100f] transition hover:bg-[#e5c9ad] disabled:cursor-not-allowed disabled:opacity-40"
           >
             Continuar con la solicitud
           </button>
