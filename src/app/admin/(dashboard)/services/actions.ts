@@ -48,65 +48,96 @@ export async function saveService(input: ServiceInput) {
   const category = input.category.trim();
   const imageUrl = input.imageUrl.trim();
 
+  // Validar nombre
   if (name.length < 2 || name.length > 120) {
-    throw new Error("El nombre debe tener entre 2 y 120 caracteres.");
+    throw new Error(
+      "El nombre debe tener entre 2 y 120 caracteres."
+    );
   }
 
+  // Validar descripción corta
   if (description.length > 500) {
-    throw new Error("La descripción no puede superar 500 caracteres.");
+    throw new Error(
+      "La descripción no puede superar 500 caracteres."
+    );
   }
 
+  // Validar descripción extensa
   if (longDescription.length > 2000) {
-    throw new Error("La descripción extensa es demasiado larga.");
+    throw new Error(
+      "La descripción extensa es demasiado larga."
+    );
   }
 
+  // Validar categoría
   if (category.length > 80) {
-    throw new Error("La categoría no puede superar 80 caracteres.");
+    throw new Error(
+      "La categoría no puede superar 80 caracteres."
+    );
   }
 
+  // Validar duración
   if (
     !Number.isInteger(input.durationMinutes) ||
     input.durationMinutes < 5 ||
     input.durationMinutes > 480
   ) {
-    throw new Error("La duración debe estar entre 5 y 480 minutos.");
+    throw new Error(
+      "La duración debe estar entre 5 y 480 minutos."
+    );
   }
 
+  // Validar precio
   let price: number | null = null;
 
   if (input.price.trim() !== "") {
     const rawPrice = input.price.trim();
 
     if (!/^\d+(\.\d{1,2})?$/.test(rawPrice)) {
-      throw new Error("Introduce un precio válido, con hasta 2 decimales.");
+      throw new Error(
+        "Introduce un precio válido, con hasta 2 decimales."
+      );
     }
 
     price = Number(rawPrice);
 
-    if (!Number.isFinite(price) || price > 99999999.99) {
+    if (
+      !Number.isFinite(price) ||
+      price > 99999999.99
+    ) {
       throw new Error("El precio no es válido.");
     }
   }
 
+  // Validar URL de imagen
   if (imageUrl) {
     try {
       const url = new URL(imageUrl);
 
-      if (!["https:", "http:"].includes(url.protocol)) {
+      if (
+        url.protocol !== "https:" &&
+        url.protocol !== "http:"
+      ) {
         throw new Error();
       }
     } catch {
-      throw new Error("La fotografía debe tener una URL HTTP o HTTPS válida.");
+      throw new Error(
+        "La fotografía debe tener una URL HTTP o HTTPS válida."
+      );
     }
   }
 
+  // Validar estados
   if (
     typeof input.featured !== "boolean" ||
     typeof input.active !== "boolean"
   ) {
-    throw new Error("Los estados del servicio no son válidos.");
+    throw new Error(
+      "Los estados del servicio no son válidos."
+    );
   }
 
+  // Datos que se guardarán en Supabase
   const payload = {
     name,
     description: description || null,
@@ -120,29 +151,50 @@ export async function saveService(input: ServiceInput) {
     updated_at: new Date().toISOString(),
   };
 
+  let serviceId: string;
+
+  // Actualizar servicio existente
   if (input.id) {
     const { data, error } = await supabase
       .from("services")
       .update(payload)
       .eq("id", input.id)
-      .select("id");
+      .select("id")
+      .single();
 
-    if (error || !data?.length) {
-      throw new Error("No se pudo actualizar el servicio.");
+    if (error || !data) {
+      throw new Error(
+        "No se pudo actualizar el servicio."
+      );
     }
+
+    serviceId = data.id;
   } else {
-    const { error } = await supabase
+    // Crear nuevo servicio
+    const { data, error } = await supabase
       .from("services")
-      .insert(payload);
+      .insert(payload)
+      .select("id")
+      .single();
 
-    if (error) {
-      throw new Error("No se pudo crear el servicio.");
+    if (error || !data) {
+      throw new Error(
+        "No se pudo crear el servicio."
+      );
     }
+
+    serviceId = data.id;
   }
 
+  // Actualizar páginas
   revalidatePath("/admin/services");
+  revalidatePath("/services");
+  revalidatePath("/booking");
 
-  return { success: true };
+  return {
+    success: true,
+    id: serviceId,
+  };
 }
 
 export async function setServiceActive(
@@ -165,10 +217,16 @@ export async function setServiceActive(
     .select("id");
 
   if (error || !data?.length) {
-    throw new Error("No se pudo cambiar el estado del servicio.");
+    throw new Error(
+      "No se pudo cambiar el estado del servicio."
+    );
   }
 
   revalidatePath("/admin/services");
+  revalidatePath("/services");
+  revalidatePath("/booking");
 
-  return { success: true };
+  return {
+    success: true,
+  };
 }
