@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { CalendarDays, Check, CheckCircle2, Clock3, Loader2, Scissors, UserRound } from "lucide-react";
+import { CalendarDays, Check, CheckCircle2, Clock3, Loader2, Scissors, UserRound, ArrowRight, Sparkles, ImageIcon } from "lucide-react";
 
 type Service = {
   id: string;
@@ -9,6 +9,8 @@ type Service = {
   description: string | null;
   duration_minutes: number;
   category: string | null;
+  price?: number | null;
+  image_url?: string | null;
 };
 
 type Slot = {
@@ -59,6 +61,11 @@ function formatTime(iso: string) {
     minute: "2-digit",
     hour12: false,
   }).format(new Date(iso));
+}
+
+function formatPrice(value: number | null | undefined) {
+  if (value == null) return "Precio a consultar";
+  return new Intl.NumberFormat("es", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
 }
 
 const inputClass =
@@ -195,13 +202,17 @@ export default function BookingExperience({ services, initialServiceId }: Props)
             <h2 className="text-xl font-light">01. Selecciona tu servicio</h2>
           </div>
           {services.length === 0 ? (
-            <p className="rounded-xl border border-white/10 p-6 text-sm text-white/50">Todavía no hay servicios disponibles.</p>
+            <p className="rounded-2xl border border-white/10 p-7 text-sm text-white/50">Todavía no hay servicios disponibles.</p>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {services.map((service) => {
                 const selected = service.id === serviceId;
                 return (
-                  <button key={service.id} type="button" disabled={!!appointmentId} aria-pressed={selected}
+                  <button
+                    key={service.id}
+                    type="button"
+                    disabled={!!appointmentId}
+                    aria-pressed={selected}
                     onClick={() => {
                       setServiceId(service.id);
                       setDate("");
@@ -209,13 +220,48 @@ export default function BookingExperience({ services, initialServiceId }: Props)
                       setSlots([]);
                       resetSelection();
                     }}
-                    className={`min-h-32 rounded-xl border p-5 text-left transition disabled:cursor-not-allowed ${selected ? "border-[#d6b79a] bg-[#d6b79a]/10" : "border-white/10 bg-[#171310] hover:border-white/30"}`}>
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-base font-medium">{service.name}</span>
-                      {selected && <Check size={18} className="shrink-0 text-[#d6b79a]" />}
+                    className={`group overflow-hidden rounded-2xl border text-left transition duration-300 disabled:cursor-not-allowed ${selected ? "border-[#d6b79a] bg-[#211a15] shadow-[0_0_0_1px_rgba(214,183,154,0.25)]" : "border-white/10 bg-[#171310] hover:border-[#d6b79a]/50"}`}
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden bg-[#25201c]">
+                      {service.image_url ? (
+                        <div
+                          role="img"
+                          aria-label={`Fotografía de ${service.name}`}
+                          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                          style={{ backgroundImage: `url("${service.image_url}")` }}
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-[#d6b79a]/60">
+                          <ImageIcon size={36} strokeWidth={1.2} />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#11100f]/70 via-transparent to-transparent" />
+                      {selected && (
+                        <span className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b79a] text-[#11100f]">
+                          <Check size={19} />
+                        </span>
+                      )}
+                      {service.category && (
+                        <span className="absolute bottom-4 left-4 text-[10px] uppercase tracking-[0.2em] text-white/90">
+                          {service.category}
+                        </span>
+                      )}
                     </div>
-                    <p className="mt-3 flex items-center gap-2 text-xs text-white/50"><Clock3 size={14} />{service.duration_minutes} minutos</p>
-                    {service.description && <p className="mt-3 line-clamp-2 text-xs leading-6 text-white/45">{service.description}</p>}
+                    <div className="p-5 sm:p-6">
+                      <h3 className="text-xl font-light tracking-tight">{service.name}</h3>
+                      {service.description && (
+                        <p className="mt-3 line-clamp-2 text-xs leading-6 text-white/50">{service.description}</p>
+                      )}
+                      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
+                        <span className="inline-flex items-center gap-2 text-xs text-white/60">
+                          <Clock3 size={15} className="text-[#d6b79a]" />
+                          {service.duration_minutes} min
+                        </span>
+                        <span className="text-sm font-medium text-[#d6b79a]">
+                          {formatPrice(service.price)}
+                        </span>
+                      </div>
+                    </div>
                   </button>
                 );
               })}
@@ -303,10 +349,19 @@ export default function BookingExperience({ services, initialServiceId }: Props)
         <div className="rounded-2xl border border-[#d6b79a]/25 bg-[#171310] p-6 sm:p-8">
           <p className="text-[10px] uppercase tracking-[0.25em] text-[#d6b79a]">Tu experiencia</p>
           <h2 className="mt-4 text-2xl font-light">Resumen de reserva</h2>
+          {selectedService?.image_url && (
+            <div
+              role="img"
+              aria-label={`Fotografía de ${selectedService.name}`}
+              className="mt-6 aspect-[16/9] rounded-xl bg-[#24201d] bg-cover bg-center"
+              style={{ backgroundImage: `url("${selectedService.image_url}")` }}
+            />
+          )}
           <div className="mt-8 space-y-5 border-t border-white/10 pt-6">
             {[
               ["Servicio", selectedService?.name ?? "Por seleccionar"],
               ["Duración", selectedService ? `${selectedService.duration_minutes} minutos` : "—"],
+              ["Precio", selectedService ? formatPrice(selectedService.price) : "Por seleccionar"],
               ["Fecha", date ? formatDate(date) : "Por seleccionar"],
               ["Profesional", selectedSlot?.staffName ?? "Por seleccionar"],
               ["Hora", selectedSlot ? formatTime(selectedSlot.startsAt) : "Por seleccionar"],
@@ -322,7 +377,7 @@ export default function BookingExperience({ services, initialServiceId }: Props)
               <button type="button" disabled={!selectedService || !selectedSlot || loading || submitting}
                 onClick={continueToForm}
                 className="mt-8 min-h-13 w-full rounded-full bg-[#d6b79a] px-5 py-4 text-xs font-semibold uppercase tracking-[0.12em] text-[#11100f] transition hover:bg-[#e5c9ad] disabled:cursor-not-allowed disabled:opacity-40">
-                Continuar con la solicitud
+                Continuar con la solicitud <ArrowRight size={16} className="ml-2 inline" />
               </button>
               <p className="mt-4 text-center text-xs leading-6 text-white/40">El horario se reserva únicamente cuando se registra la solicitud.</p>
             </>
@@ -368,10 +423,17 @@ export default function BookingExperience({ services, initialServiceId }: Props)
 
       {appointmentId && (
         <section role="status" className="rounded-2xl border border-[#d6b79a]/30 bg-[#d6b79a]/10 p-8 text-center sm:p-12 lg:col-span-2">
-          <CheckCircle2 size={40} className="mx-auto text-[#d6b79a]" />
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-[#d6b79a]/40 bg-[#d6b79a]/10"><CheckCircle2 size={42} className="text-[#d6b79a]" /></div>
+          <p className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-[#d6b79a]"><Sparkles size={14} /> Élite Beauty Studio</p>
           <h2 className="mt-5 text-2xl font-light text-[#d6b79a]">Solicitud registrada</h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-white/70">Tu solicitud se ha guardado y está pendiente de confirmación por el salón.</p>
-          <p className="mt-4 break-all text-xs text-white/40">Referencia: {appointmentId}</p>
+          <div className="mx-auto mt-7 max-w-md rounded-xl border border-white/10 bg-[#171310] p-5 text-left">
+            <p className="text-sm font-medium">{selectedService?.name}</p>
+            <p className="mt-2 text-xs capitalize text-white/60">{date ? formatDate(date) : ""} · {selectedSlot ? formatTime(selectedSlot.startsAt) : ""}</p>
+            <p className="mt-2 text-xs text-white/60">{selectedSlot?.staffName}</p>
+          </div>
+          <p className="mt-5 break-all text-xs text-white/40">Referencia: {appointmentId}</p>
+          <p className="mt-3 text-xs text-white/50">Esta solicitud no es una confirmación definitiva de la cita.</p>
         </section>
       )}
     </div>
