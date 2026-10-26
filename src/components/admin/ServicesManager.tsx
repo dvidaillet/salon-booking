@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Plus,
@@ -11,11 +10,13 @@ import {
   Loader2,
   Clock3,
   Star,
+  ImagePlus,
 } from "lucide-react";
 import {
   saveService,
   setServiceActive,
 } from "@/app/admin/(dashboard)/services/actions";
+import { uploadServiceImage } from "@/app/admin/(dashboard)/services/upload-service-image";
 
 type ServiceRecord = {
   id: string;
@@ -50,6 +51,54 @@ export default function ServicesManager({
   const [duration, setDuration] = useState("60");
   const [category, setCategory] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
+
+  const previewUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
+
+  function resetSelectedImage() {
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
+    setImageFile(null);
+    setImagePreview(null);
+    setFileInputKey((value) => value + 1);
+  }
+
+  function selectImage(file: File | undefined) {
+    setError("");
+    if (!file) {
+      resetSelectedImage();
+      return;
+    }
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setError("Solo se permiten fotografías JPG, PNG o WebP.");
+      resetSelectedImage();
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("La fotografía no puede superar 5 MB.");
+      resetSelectedImage();
+      return;
+    }
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+    }
+    const previewUrl = URL.createObjectURL(file);
+    previewUrlRef.current = previewUrl;
+    setImageFile(file);
+    setImagePreview(previewUrl);
+  }
   const [featured, setFeatured] = useState(false);
   const [active, setActive] = useState(true);
 
@@ -69,6 +118,7 @@ export default function ServicesManager({
     setDuration("60");
     setCategory("");
     setImageUrl("");
+    resetSelectedImage();
     setFeatured(false);
     setActive(true);
     setError("");
@@ -87,6 +137,7 @@ export default function ServicesManager({
     setDuration(String(service.duration_minutes));
     setCategory(service.category ?? "");
     setImageUrl(service.image_url ?? "");
+    resetSelectedImage();
     setFeatured(service.featured);
     setActive(service.active);
     setError("");
@@ -102,8 +153,9 @@ export default function ServicesManager({
     setMessage("");
 
     startTransition(async () => {
+      let savedId: string | null = null;
       try {
-        await saveService({
+        const result = await saveService({
           id: editing?.id,
           name,
           description,
@@ -115,6 +167,13 @@ export default function ServicesManager({
           featured,
           active,
         });
+        savedId = result.id;
+
+        if (imageFile) {
+          const formData = new FormData();
+          formData.set("image", imageFile);
+          await uploadServiceImage(savedId, formData);
+        }
 
         setFormOpen(false);
         setMessage(
@@ -123,8 +182,27 @@ export default function ServicesManager({
             : "Servicio creado correctamente."
         );
         setEditing(null);
+        resetSelectedImage();
         router.refresh();
       } catch (err) {
+        if (savedId) {
+          // El servicio ya se guardó. Reutilizar su ID al reintentar
+          // evita crear registros duplicados si falló la fotografía.
+          setEditing({
+            id: savedId,
+            name,
+            description,
+            long_description: longDescription,
+            price: price.trim() ? Number(price) : null,
+            duration_minutes: Number(duration),
+            category,
+            image_url: imageUrl || null,
+            featured,
+            active,
+          });
+          setMessage("Los datos del servicio se guardaron, pero la fotografía sigue pendiente. Puedes reintentar.");
+          router.refresh();
+        }
         setError(
           err instanceof Error
             ? err.message
@@ -426,6 +504,57 @@ export default function ServicesManager({
                 className={fieldClass}
                 placeholder="https://..."
               />
+            </div>
+
+            <div className="border border-white/10 bg-[#171310] p-5 sm:p-6">
+              <label htmlFor="service-image-file" className={labelClass}>
+                Subir fotografía desde tu dispositivo
+              </label>
+              <label
+                htmlFor="service-image-file"
+                className="flex min-h-14 cursor-pointer items-center justify-center gap-3 border border-dashed border-[#d6b79a]/40 px-4 py-3 text-center text-sm text-[#d6b79a] transition hover:border-[#d6b79a]"
+              >
+                <ImagePlus size={20} />
+                {imageFile ? "Cambiar fotografía seleccionada" : "Seleccionar fotografía"}
+              </label>
+              <input
+                key={fileInputKey}
+                id="service-image-file"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                disabled={pending}
+                onChange={(event) => selectImage(event.target.files?.[0])}
+                className="sr-only"
+              />
+              <p className="mt-3 text-xs leading-5 text-white/45">
+                JPG, PNG o WebP. Máximo 5 MB. La fotografía se subirá al guardar el servicio.
+              </p>
+              {imageFile && (
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <p className="break-all text-xs text-white/70">{imageFile.name}</p>
+                  <button
+                    type="button"
+                    onClick={resetSelectedImage}
+                    disabled={pending}
+                    className="text-xs text-[#d6b79a] underline underline-offset-4 disabled:opacity-50"
+                  >
+                    Quitar selección
+                  </button>
+                </div>
+              )}
+              {(imagePreview || imageUrl) && (
+                <div
+                  role="img"
+                  aria-label="Vista previa de la fotografía del servicio"
+                  className="mt-5 aspect-[4/3] max-w-md bg-[#24201d] bg-cover bg-center"
+                  style={{ backgroundImage: `url("${imagePreview || imageUrl}")` }}
+                />
+              )}
+              {!imageFile && imageUrl && (
+                <p className="mt-2 text-xs text-white/45">
+                  Imagen actual o URL indicada. Si eliges un archivo, tendrá prioridad al guardar.
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
