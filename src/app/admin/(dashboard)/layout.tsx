@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import AdminNavigation from "@/components/admin/AdminNavigation";
 
 export const dynamic = "force-dynamic";
 
@@ -26,5 +27,10 @@ export default async function AdminDashboardLayout({
     redirect("/admin/unauthorized");
   }
 
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-[#11100f] text-white">
+      <AdminNavigation />
+      {children}
+    </div>
+  );
 }
