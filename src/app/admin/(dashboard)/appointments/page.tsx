@@ -50,17 +50,21 @@ export default async function AppointmentsPage() {
   }));
 
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-8 px-4 py-8 text-white sm:px-8">
-      <div>
-        <p className="text-xs uppercase tracking-[0.25em] text-[#d6b79a]">
-          ÉLITE · Back Office
-        </p>
-        <h1 className="mt-3 text-3xl font-light sm:text-4xl">Gestión de citas</h1>
-        <p className="mt-3 text-sm leading-7 text-white/50">
-          Revisa las solicitudes y administra las citas del salón.
-        </p>
+    <main className="min-h-screen bg-[#11100f] px-5 py-10 text-white sm:px-10 lg:px-16">
+      <div className="mx-auto max-w-7xl">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-[#d6b79a]">
+            ÉLITE · Back Office
+          </p>
+          <h1 className="mt-3 text-3xl font-light sm:text-4xl">
+            Gestión de citas
+          </h1>
+          <p className="mt-3 text-sm leading-7 text-white/50">
+            Revisa las solicitudes y administra las citas del salón.
+          </p>
+        </div>
+        <AppointmentsManager appointments={appointments} />
       </div>
-      <AppointmentsManager appointments={appointments} />
     </main>
   );
 }
