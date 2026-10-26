@@ -45,8 +45,8 @@ export default async function AppointmentsPage() {
     endsAt: item.ends_at,
     status: item.status,
     createdAt: item.created_at,
-    serviceName: item.services?.name ?? "Servicio no disponible",
-    staffName: item.staff?.name ?? "Profesional no disponible",
+    serviceName: item.services?.[0]?.name ?? "Servicio no disponible",
+    staffName: item.staff?.[0]?.name ?? "Profesional no disponible",
   }));
 
   return (
