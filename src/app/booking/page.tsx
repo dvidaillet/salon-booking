@@ -16,19 +16,30 @@ export default async function BookingPage({
   searchParams,
 }: BookingPageProps) {
   const params = await searchParams;
+
   const supabase = createAdminClient();
 
   const { data: services, error } = await supabase
     .from("services")
-    .select("id, name, description, duration_minutes, category")
+    .select(
+      "id, name, description, duration_minutes, category, price, image_url"
+    )
     .eq("active", true)
     .order("name", { ascending: true });
+
+  if (error) {
+    console.error(
+      "Error al cargar los servicios para reservas:",
+      error.message
+    );
+  }
 
   return (
     <>
       <Header />
 
       <main className="min-h-screen bg-[#11100f] text-white">
+        {/* HERO */}
         <section className="relative overflow-hidden border-b border-white/10 px-5 pb-14 pt-24 sm:px-10 sm:pb-20 sm:pt-32 lg:px-16">
           <div
             aria-hidden="true"
@@ -42,8 +53,7 @@ export default async function BookingPage({
 
             <h1 className="mt-7 max-w-4xl text-5xl font-light tracking-[-0.065em] sm:text-6xl lg:text-7xl">
               Tu belleza.
-              <br />
-              <span className="italic text-[#d6b79a]">
+              <span className="mt-2 block italic text-[#d6b79a]">
                 Tu momento.
               </span>
             </h1>
@@ -60,13 +70,17 @@ export default async function BookingPage({
           </div>
         </section>
 
+        {/* EXPERIENCIA DE RESERVA */}
         <section className="px-5 py-12 sm:px-10 sm:py-20 lg:px-16">
           <div className="mx-auto max-w-6xl">
             {error ? (
-              <p role="alert" className="text-sm text-red-300">
-                No pudimos cargar los servicios.
-                Inténtalo de nuevo más tarde.
-              </p>
+              <div
+                role="alert"
+                className="rounded-2xl border border-red-400/20 bg-red-400/5 p-6 text-sm leading-7 text-red-300"
+              >
+                No pudimos cargar los servicios en este momento.
+                Inténtalo nuevamente más tarde.
+              </div>
             ) : (
               <BookingExperience
                 services={services ?? []}
