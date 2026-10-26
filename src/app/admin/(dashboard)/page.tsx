@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -6,29 +7,46 @@ import {
   Scissors,
   Clock3,
   ArrowUpRight,
+  ArrowLeft,
+  LogOut,
+  LayoutDashboard,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
 
 const sections = [
   {
     title: "Citas",
-    description: "Consulta y administra las solicitudes.",
+    description:
+      "Consulta las solicitudes, confirma reservas y administra las citas de tus clientes.",
+    href: "/admin/appointments",
     icon: CalendarDays,
+    label: "Gestionar citas",
   },
   {
     title: "Profesionales",
-    description: "Gestiona estilistas y disponibilidad.",
+    description:
+      "Administra tu equipo, asigna servicios y configura los horarios semanales.",
+    href: "/admin/staff",
     icon: Users,
+    label: "Gestionar profesionales",
   },
   {
     title: "Servicios",
-    description: "Configura servicios y duraciones.",
+    description:
+      "Crea y edita los servicios del salón, sus duraciones, categorías y precios.",
+    href: "/admin/services",
     icon: Scissors,
+    label: "Gestionar servicios",
   },
   {
-    title: "Horarios",
-    description: "Organiza turnos, ausencias y cierres.",
+    title: "Disponibilidad",
+    description:
+      "Organiza las ausencias de las profesionales y los cierres generales del salón.",
+    href: "/admin/availability",
     icon: Clock3,
+    label: "Gestionar disponibilidad",
   },
 ];
 
@@ -48,93 +66,148 @@ export default async function AdminPage() {
     await supabase.rpc("is_admin");
 
   if (permissionError || !isAdmin) {
-    redirect("/admin/login?error=unauthorized");
+    redirect("/admin/unauthorized");
   }
 
   return (
-    <main className="min-h-screen bg-[#11100f] px-5 py-12 text-white sm:px-10 lg:px-16">
+    <main className="min-h-screen bg-[#11100f] px-5 py-8 text-white sm:px-10 sm:py-12 lg:px-16">
       <div className="mx-auto max-w-7xl">
+        {/* Encabezado */}
         <header className="flex flex-wrap items-center justify-between gap-6 border-b border-white/10 pb-8">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#d6b79a]">
-              Élite Beauty Studio
-            </p>
-            <h1 className="mt-3 text-3xl font-light tracking-tight">
-              Back Office
-            </h1>
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#d6b79a]/30 bg-[#d6b79a]/10">
+              <LayoutDashboard
+                size={22}
+                strokeWidth={1.5}
+                className="text-[#d6b79a]"
+              />
+            </div>
+
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[#d6b79a]">
+                Élite Beauty Studio
+              </p>
+
+              <h1 className="mt-2 text-2xl font-light tracking-tight sm:text-3xl">
+                Back Office
+              </h1>
+            </div>
           </div>
 
           <form action="/admin/logout" method="post">
             <button
               type="submit"
-              className="border border-white/20 px-5 py-3 text-xs uppercase tracking-[0.15em] transition hover:border-[#d6b79a]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-5 py-3 text-xs uppercase tracking-[0.12em] text-white/80 transition hover:border-[#d6b79a] hover:text-[#d6b79a]"
             >
+              <LogOut size={15} />
               Cerrar sesión
             </button>
           </form>
         </header>
 
-        <section className="py-14">
+        {/* Presentación */}
+        <section className="pb-10 pt-12 sm:pb-14 sm:pt-16">
           <p className="text-xs uppercase tracking-[0.25em] text-[#d6b79a]">
             Panel de administración
           </p>
 
-          <h2 className="mt-5 text-4xl font-light tracking-[-0.05em] sm:text-6xl">
-            Gestiona tu salón.
+          <h2 className="mt-5 max-w-3xl text-4xl font-light tracking-[-0.05em] sm:text-5xl lg:text-6xl">
+            Todo tu salón.
+            <span className="block text-[#d6b79a]">
+              En un solo lugar.
+            </span>
           </h2>
 
-          <p className="mt-5 max-w-xl text-sm leading-7 text-white/55">
-            Desde aquí podrás gestionar profesionales, servicios,
-            horarios y solicitudes de citas.
+          <p className="mt-6 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
+            Gestiona las citas de tus clientes, los servicios, tu equipo
+            de profesionales y la disponibilidad del salón desde un
+            mismo espacio.
           </p>
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-2">
-          {sections.map((section) => {
-            const Icon = section.icon;
+        {/* Navegación */}
+        <section aria-labelledby="admin-modules-title">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <h3
+              id="admin-modules-title"
+              className="text-lg font-light text-white/90"
+            >
+              Módulos de gestión
+            </h3>
 
-            return (
-              <article
-                key={section.title}
-                className="group border border-white/10 bg-[#171310] p-7 sm:p-9"
-              >
-                <div className="flex items-start justify-between">
-                  <Icon
-                    size={27}
-                    strokeWidth={1.3}
-                    className="text-[#d6b79a]"
-                  />
+            <span className="text-xs text-white/40">
+              {sections.length} módulos disponibles
+            </span>
+          </div>
 
-                  <ArrowUpRight
-                    size={20}
-                    className="text-white/40"
-                  />
-                </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {sections.map((section) => {
+              const Icon = section.icon;
 
-                <h3 className="mt-10 text-2xl font-light">
-                  {section.title}
-                </h3>
+              return (
+                <Link
+                  key={section.href}
+                  href={section.href}
+                  aria-label={section.label}
+                  className="group relative flex min-h-64 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#171310] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#d6b79a]/50 hover:bg-[#1d1713] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d6b79a] sm:p-9"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-[#d6b79a]/20 bg-[#d6b79a]/10 transition-colors group-hover:bg-[#d6b79a]/15">
+                      <Icon
+                        size={27}
+                        strokeWidth={1.4}
+                        className="text-[#d6b79a]"
+                      />
+                    </div>
 
-                <p className="mt-3 text-sm leading-7 text-white/50">
-                  {section.description}
-                </p>
+                    <ArrowUpRight
+                      size={22}
+                      className="text-white/35 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-[#d6b79a]"
+                    />
+                  </div>
 
-                <p className="mt-8 text-[10px] uppercase tracking-[0.2em] text-[#d6b79a]">
-                  Próximamente
-                </p>
-              </article>
-            );
-          })}
+                  <div className="mt-10">
+                    <h4 className="text-2xl font-light tracking-tight">
+                      {section.title}
+                    </h4>
+
+                    <p className="mt-3 max-w-md text-sm leading-7 text-white/50">
+                      {section.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-auto flex items-center gap-2 pt-8 text-[11px] font-medium uppercase tracking-[0.16em] text-[#d6b79a]">
+                    <span>{section.label}</span>
+                    <ArrowUpRight size={15} />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </section>
 
-        <div className="mt-12">
+        {/* Accesos adicionales */}
+        <section className="mt-12 flex flex-wrap items-center justify-between gap-5 border-t border-white/10 pt-8">
           <Link
             href="/"
-            className="text-xs uppercase tracking-[0.2em] text-white/50 transition hover:text-[#d6b79a]"
+            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-white/50 transition hover:text-[#d6b79a]"
           >
-            ← Volver al sitio público
+            <ArrowLeft size={16} />
+            Volver al sitio público
           </Link>
-        </div>
+
+          <Link
+            href="/booking"
+            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-[#d6b79a] transition hover:text-white"
+          >
+            Ver reservas públicas
+            <ArrowUpRight size={16} />
+          </Link>
+        </section>
+
+        <footer className="mt-14 border-t border-white/5 pt-6 text-center text-[10px] uppercase tracking-[0.2em] text-white/25">
+          Élite Beauty Studio · Administración
+        </footer>
       </div>
     </main>
   );
