@@ -26,6 +26,8 @@ const labelClass = "mb-3 block text-xs uppercase tracking-[0.15em] text-white/60
 
 export default function ServicesManager({ initialServices }: Props) {
   const router = useRouter();
+  const formRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState<ServiceRecord | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -51,6 +53,15 @@ export default function ServicesManager({ initialServices }: Props) {
       if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!formOpen) return;
+    const frame = requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      nameInputRef.current?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [formOpen, editing?.id]);
 
   function resetSelectedImage() {
     if (previewUrlRef.current) {
@@ -241,7 +252,16 @@ export default function ServicesManager({ initialServices }: Props) {
       )}
 
       {formOpen && (
-        <div className="mt-10 border border-[#d6b79a]/30 bg-[#1c1714] p-6 sm:p-9">
+        <div ref={formRef} className="relative mt-10 scroll-mt-28 rounded-2xl border border-[#d6b79a]/50 bg-[#1c1714] p-6 shadow-[0_20px_80px_rgba(0,0,0,0.3)] sm:p-9">
+          <div className="mb-6 flex items-center gap-3 border-b border-white/10 pb-5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d6b79a]/10 text-[#d6b79a]">
+              {editing ? <Pencil size={18} /> : <Plus size={18} />}
+            </span>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#d6b79a]">{editing ? "Modo edición" : "Nuevo registro"}</p>
+              <p className="mt-1 text-xs text-white/50">{editing ? `Modificando: ${editing.name}` : "Completa los datos para crear un servicio"}</p>
+            </div>
+          </div>
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-2xl font-light">{editing ? "Editar servicio" : "Nuevo servicio"}</h2>
             <button type="button" onClick={() => { if (!pending) { setFormOpen(false); setError(""); resetSelectedImage(); } }} disabled={pending} aria-label="Cerrar formulario" className="p-2 text-white/60 hover:text-white"><X size={20} /></button>
@@ -249,7 +269,7 @@ export default function ServicesManager({ initialServices }: Props) {
           <form onSubmit={handleSave} className="mt-8 space-y-6">
             <div>
               <label htmlFor="service-name" className={labelClass}>Nombre del servicio</label>
-              <input id="service-name" required maxLength={120} value={name} onChange={(event) => setName(event.target.value)} className={fieldClass} />
+              <input ref={nameInputRef} id="service-name" required maxLength={120} value={name} onChange={(event) => setName(event.target.value)} className={fieldClass} />
             </div>
             <div>
               <label htmlFor="service-description" className={labelClass}>Descripción corta</label>
@@ -299,7 +319,7 @@ export default function ServicesManager({ initialServices }: Props) {
             </div>
             {error && <p role="alert" className="text-sm text-red-300">{error}</p>}
             <button type="submit" disabled={pending} className="flex min-h-13 w-full items-center justify-center gap-3 bg-[#d6b79a] px-6 text-xs font-semibold uppercase tracking-[0.16em] text-[#11100f] transition hover:bg-[#ead0b6] disabled:opacity-50 sm:w-auto">
-              {pending && <Loader2 size={17} className="animate-spin" />}{editing ? "Guardar cambios" : "Crear servicio"}
+              {pending && <Loader2 size={17} className="animate-spin" />}{pending ? "Guardando servicio..." : editing ? "Guardar cambios" : "Crear servicio"}
             </button>
           </form>
         </div>

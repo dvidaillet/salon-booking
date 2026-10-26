@@ -11,6 +11,8 @@ const navigation = [
   { label: "Inicio", href: "/" },
   { label: "Servicios", href: "/services" },
   { label: "Contacto", href: "/#contacto" },
+  { label: "Reservas", href: "/booking" },
+  { label: "Admin", href: "/admin" },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -88,7 +90,7 @@ export default function Header() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setMenuOpen(false);
       }
     };
@@ -153,7 +155,7 @@ export default function Header() {
             {/* NAVEGACIÓN ESCRITORIO */}
             <nav
               aria-label="Navegación principal"
-              className="hidden items-center gap-10 md:flex"
+              className="hidden items-center gap-4 lg:flex xl:gap-8"
             >
               {navigation.map((item) => {
                 const contact = item.href === "/#contacto";
@@ -172,6 +174,23 @@ export default function Header() {
                         strokeWidth={1.6}
                         className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                       />
+                    </Link>
+                  );
+                }
+
+                if (item.href === "/booking") {
+                  return (
+                    <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#d6b79a] px-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#11100f] transition hover:bg-[#ead0b6]">
+                      Reservar cita <ArrowUpRight size={15} />
+                    </Link>
+                  );
+                }
+                if (item.href === "/admin") {
+                  return (
+                    <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
+                      className={`inline-flex min-h-11 items-center rounded-full border px-4 text-[11px] font-medium uppercase tracking-[0.12em] transition ${active ? "border-[#d6b79a] text-[#d6b79a]" : "border-white/20 text-white/65 hover:border-[#d6b79a]/60 hover:text-white"}`}>
+                      Admin
                     </Link>
                   );
                 }
@@ -207,7 +226,7 @@ export default function Header() {
               aria-expanded={menuOpen}
               aria-controls={menuId}
               onClick={() => setMenuOpen((value) => !value)}
-              className="relative z-[60] flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white transition-colors hover:border-[#d6b79a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d6b79a] md:hidden"
+              className="relative z-[60] flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white transition-colors hover:border-[#d6b79a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d6b79a] lg:hidden"
             >
               <span className="sr-only">
                 {menuOpen ? "Cerrar navegación" : "Abrir navegación"}
@@ -263,7 +282,7 @@ export default function Header() {
               duration: reduceMotion ? 0 : 0.45,
               ease,
             }}
-            className="fixed inset-0 z-40 flex h-dvh flex-col overflow-y-auto bg-[#11100f] px-7 pb-8 pt-28 text-white sm:px-12 md:hidden"
+            className="fixed inset-0 z-40 flex h-dvh flex-col overflow-y-auto bg-[#11100f] px-7 pb-8 pt-28 text-white sm:px-12 lg:hidden"
           >
             <div className="mb-12 flex items-center gap-4">
               <span className="h-px w-10 bg-[#d6b79a]" />
